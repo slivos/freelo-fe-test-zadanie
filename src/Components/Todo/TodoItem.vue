@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group p-1 flex items-center gap-3 rounded-md border bg-opacity-60"
+    class="group p-1 flex items-center gap-3 rounded-md border bg-opacity-60 relative overflow-hidden"
     :class="{
       ' bg-gray-200  border-gray-500': item.completed,
       'bg-mint-green  border-emerald-300': !item.completed,
@@ -10,7 +10,7 @@
       class="todo-task-handle z-10 w-5 h-5 flex-shrink-0 cursor-grab active:cursor-grabbing outline-none"
     />
 
-    <div v-if="!edit" class="group flex items-center gap-2 select-none">
+    <div v-if="!edit" class="group flex items-center gap-2 select-none pr-14">
       <input
         type="checkbox"
         :checked="item.completed"
@@ -35,28 +35,32 @@
       </svg>
 
       <span
-        class="text-sm font-semibold text-gray-500 peer-checked:line-through"
+        class="text-sm font-semibold text-gray-500 peer-checked:line-through break-all"
       >
         {{ item.title }}</span
       >
     </div>
 
     <div
-      v-if="!edit"
-      v-tooltip="'Edit'"
-      @click="openEdit"
-      class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 ms-auto flex items-center justify-center"
+      class="absolute right-1 top-2/4 -translate-y-2/4 flex gap-2 items-start"
     >
-      <EditIcon class="w-4 h-4 stroke-gray-500" />
-    </div>
+      <div
+        v-if="!edit"
+        v-tooltip="'Edit'"
+        @click="openEdit"
+        class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 ms-auto flex items-center justify-center"
+      >
+        <EditIcon class="w-4 h-4 stroke-gray-500" />
+      </div>
 
-    <div
-      v-if="!edit"
-      @click="deleteItem"
-      v-tooltip="'Delete'"
-      class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 flex items-center justify-center"
-    >
-      <TrashIcon class="w-4 h-4 stroke-red-400" />
+      <div
+        v-if="!edit"
+        @click="deleteItem"
+        v-tooltip="'Delete'"
+        class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 flex items-center justify-center"
+      >
+        <TrashIcon class="w-4 h-4 stroke-red-400" />
+      </div>
     </div>
 
     <div
@@ -70,7 +74,7 @@
       {{ item.title }}
     </div>
 
-    <div v-if="edit" class="flex items-center gap-2">
+    <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">
       <button
         @click="editItem"
         class="px-4 py-1 text-xs text-sky-500 font-semibold rounded-md border border-sky-500 hover:text-white hover:bg-sky-500 hover:border-transparent focus:outline-none"
@@ -125,7 +129,7 @@ const openEdit = () => {
     const textbox = textarea.value as HTMLTextAreaElement;
     if (!textbox) return;
 
-    // Wait for the next render cycle to ensure focus has been applied
+    // Use a slightly longer timeout to address mobile rendering delays
     setTimeout(() => {
       const selection = window.getSelection();
       const range = document.createRange();
@@ -135,7 +139,10 @@ const openEdit = () => {
       range.collapse(false); // Collapse to the end of the content
       selection?.removeAllRanges();
       selection?.addRange(range);
-    }, 0); // Use a small timeout to handle mobile quirks
+
+      // For better compatibility on mobile devices
+      textbox.scrollTop = textbox.scrollHeight; // Ensure the cursor is visible
+    }, 50); // Increase timeout for better mobile support
   });
 };
 

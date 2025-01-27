@@ -1,5 +1,5 @@
 <template>
-  <section class="py-6">
+  <section class="pt-6 sm:pt-10 pb-14">
     <header
       class="mb-6 lg:mb-10 bg-sky-200 bg-opacity-90 border border-sky-400 rounded-md p-4"
     >

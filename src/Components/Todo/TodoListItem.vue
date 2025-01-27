@@ -1,46 +1,50 @@
 <template>
   <div
     ref="listItemRef"
-    class="flex flex-col gap-4 bg-sky-50 border border-sky-200 rounded-md p-2"
+    class="flex flex-col gap-4 bg-sky-50 border border-sky-200 rounded-md p-2 relative overflow-hidden scroll-mb-12"
   >
     <div class="group flex items-center gap-3">
       <DragDropIcon
         class="todo-list-handle z-10 w-6 h-6 flex-shrink-0 cursor-grab active:cursor-grabbing outline-none stroke-gray-500"
       />
 
-      <div v-if="!edit" class="group flex items-center gap-2 select-none">
-        <span class="lg:text-xl font-bold text-sky-700"> {{ item.title }}</span>
+      <div v-if="!edit" class="flex gap-2 justify-between w-full">
+        <div v-if="!edit" class="group flex gap-2 select-none">
+          <span class="lg:text-xl font-bold text-sky-700 break-all">
+            {{ item.title }}</span
+          >
+
+          <div
+            v-tooltip="'Edit'"
+            @click="openEdit"
+            class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-6 h-6 flex items-center justify-center"
+          >
+            <EditIcon class="w-4 h-4 stroke-gray-500" />
+          </div>
+        </div>
 
         <div
-          v-tooltip="'Edit'"
-          @click="openEdit"
-          class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-6 h-6 flex items-center justify-center"
+          v-if="!edit"
+          @click="deleteList"
+          v-tooltip="'Delete'"
+          class="outline-none flex-shrink-0 cursor-pointer w-6 h-6 ms-auto flex items-center justify-center"
         >
-          <EditIcon class="w-4 h-4 stroke-gray-500" />
+          <TrashIcon class="w-4 h-4 stroke-red-400" />
         </div>
-      </div>
-
-      <div
-        v-if="!edit"
-        @click="deleteList"
-        v-tooltip="'Delete'"
-        class="outline-none flex-shrink-0 cursor-pointer w-6 h-6 ms-auto flex items-center justify-center"
-      >
-        <TrashIcon class="w-4 h-4 stroke-red-400" />
       </div>
 
       <div
         v-if="edit"
         ref="textarea"
         @input="onInput"
-        class="flex-grow min-w-6 lg:text-xl font-bold text-sky-700 overflow-clip outline-none bg-transparent"
+        class="flex-grow lg:text-xl font-bold text-sky-700 overflow-clip outline-none bg-transparent break-all"
         tabindex="0"
         contenteditable
       >
         {{ item.title }}
       </div>
 
-      <div v-if="edit" class="flex items-center gap-2">
+      <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">
         <button
           @click="editList"
           class="px-4 py-1 text-xs text-sky-500 font-semibold rounded-md border border-sky-500 hover:text-white hover:bg-sky-500 hover:border-transparent focus:outline-none"
