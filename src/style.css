@@ -1,2 +1,9 @@
 @tailwind base;
 @tailwind utilities;
+
+div.v-popper__popper {
+  .v-popper__wrapper .v-popper__inner {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}

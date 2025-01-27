@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TodoLists from "./Pages/TodoLists.vue";
+</script>
 
 <template>
-  <div class="grid">Test</div>
+  <TodoLists />
 </template>
