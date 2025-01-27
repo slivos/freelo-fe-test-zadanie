@@ -12,6 +12,7 @@
 import AddIcon from "@svg/add.svg";
 import { useTodoListsStore } from "@stores/todo-lists-store";
 import { uuid } from "vue-uuid";
+import { nextTick } from "vue";
 
 const todoListsStore = useTodoListsStore();
 
@@ -23,5 +24,11 @@ const addNewList = () => {
   };
 
   todoListsStore.addTodoList(newList);
+  nextTick(() => {
+    document.body.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  });
 };
 </script>

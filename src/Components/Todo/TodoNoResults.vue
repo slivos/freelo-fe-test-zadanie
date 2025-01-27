@@ -1,12 +1,17 @@
 <template>
   <div class="flex flex-col gap-4 items-center">
     <div class="flex items-center justify-center max-w-[540px] mx-auto">
-      <img
-        src="/images/no-results.png"
-        alt="no results"
-        width="540"
-        height="540"
-      />
+      <picture>
+        <source srcset="/images/no-results.webp" type="image/webp" />
+
+        <img
+          src="/images/no-results.png"
+          alt="no results"
+          width="540"
+          height="540"
+          decoding="async"
+        />
+      </picture>
     </div>
 
     <div class="flex flex-col items-center">

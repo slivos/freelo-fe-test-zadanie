@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="listItemRef"
     class="flex flex-col gap-4 bg-sky-50 border border-sky-200 rounded-md p-2"
   >
     <div class="group flex items-center gap-3">
@@ -13,7 +14,7 @@
         <div
           v-tooltip="'Edit'"
           @click="openEdit"
-          class="opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-6 h-6 flex items-center justify-center"
+          class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-6 h-6 flex items-center justify-center"
         >
           <EditIcon class="w-4 h-4 stroke-gray-500" />
         </div>
@@ -32,7 +33,7 @@
         v-if="edit"
         ref="textarea"
         @input="onInput"
-        class="flex-grow min-w-6 text-xl font-bold text-sky-700 overflow-clip outline-none bg-transparent"
+        class="flex-grow min-w-6 lg:text-xl font-bold text-sky-700 overflow-clip outline-none bg-transparent"
         tabindex="0"
         contenteditable
       >
@@ -101,6 +102,7 @@ const currentList = ref(todoListsStore.getCurrentTodoList(props.item.id).value);
 const tasks = ref(todoListsStore.getTasksRef(props.item.id).value);
 const textarea = ref<HTMLElement>();
 const edit = ref(false);
+const listItemRef = ref<HTMLElement>();
 
 const config: Partial<ParentConfig<any>> = {
   group: "todoTasks",
@@ -138,16 +140,19 @@ const openEdit = () => {
   nextTick(() => {
     textarea.value?.focus();
 
-    const textbox = textarea.value as Node;
+    const textbox = textarea.value as HTMLTextAreaElement;
 
-    // Move the cursor to the end of its content
-    const range = document.createRange();
-    const selection = window.getSelection();
+    // Wait for the next render cycle to ensure focus has been applied
+    setTimeout(() => {
+      const selection = window.getSelection();
+      const range = document.createRange();
 
-    range.selectNodeContents(textbox);
-    range.collapse(false); // Collapse the range to the end of the content
-    selection?.removeAllRanges();
-    selection?.addRange(range);
+      // Move the cursor to the end of the content
+      range.selectNodeContents(textbox);
+      range.collapse(false); // Collapse to the end of the content
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }, 0); // Use a small timeout to handle mobile quirks
   });
 };
 
@@ -179,6 +184,15 @@ const addTask = () => {
   };
 
   todoListsStore.addTask(props.item.id, newTask);
+
+  nextTick(() => {
+    if (listItemRef.value) {
+      listItemRef.value.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  });
 };
 
 const removeTask = (taskId: string) => {

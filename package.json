@@ -9,10 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",
     "@formkit/drag-and-drop": "^0.3.3",
-    "@vueuse/core": "^12.5.0",
-    "axios": "^1.7.9",
     "floating-vue": "^5.2.2",
     "pinia": "^2.3.1",
     "vue": "^3.5.1",
@@ -20,15 +17,15 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.9",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11",
     "vite-svg-loader": "^5.1.0",
     "vue-tsc": "^2.2.0"
   }

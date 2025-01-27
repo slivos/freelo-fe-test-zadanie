@@ -45,7 +45,7 @@
       v-if="!edit"
       v-tooltip="'Edit'"
       @click="openEdit"
-      class="opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 ms-auto flex items-center justify-center"
+      class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 ms-auto flex items-center justify-center"
     >
       <EditIcon class="w-4 h-4 stroke-gray-500" />
     </div>
@@ -54,7 +54,7 @@
       v-if="!edit"
       @click="deleteItem"
       v-tooltip="'Delete'"
-      class="opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 flex items-center justify-center"
+      class="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity outline-none flex-shrink-0 cursor-pointer w-5 h-5 flex items-center justify-center"
     >
       <TrashIcon class="w-4 h-4 stroke-red-400" />
     </div>
@@ -121,17 +121,21 @@ const openEdit = () => {
 
   nextTick(() => {
     textarea.value?.focus();
-    const textbox = textarea.value as Node;
+
+    const textbox = textarea.value as HTMLTextAreaElement;
     if (!textbox) return;
 
-    // Move the cursor to the end of its content
-    const range = document.createRange();
-    const selection = window.getSelection();
+    // Wait for the next render cycle to ensure focus has been applied
+    setTimeout(() => {
+      const selection = window.getSelection();
+      const range = document.createRange();
 
-    range.selectNodeContents(textbox);
-    range.collapse(false); // Collapse the range to the end of the content
-    selection?.removeAllRanges();
-    selection?.addRange(range);
+      // Move the cursor to the end of its content
+      range.selectNodeContents(textbox);
+      range.collapse(false); // Collapse to the end of the content
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }, 0); // Use a small timeout to handle mobile quirks
   });
 };
 
