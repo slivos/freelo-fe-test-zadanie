@@ -122,6 +122,7 @@ const edit = ref(false);
 const openEdit = () => {
   edit.value = true;
   nextTick(() => {
+    autoResize(textarea.value);
     textarea.value?.focus();
   });
 
