@@ -70,7 +70,7 @@
       v-model="item.title"
       @input="onInput"
       rows="1"
-      class="appearance-none flex-grow text-sm font-semibold text-gray-500 resize-none overflow-hidden outline-none bg-transparent break-all"
+      class="appearance-none flex-grow text-sm font-semibold text-gray-500 resize-none overflow-hidden outline-none bg-transparent"
     />
 
     <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">

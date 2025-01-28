@@ -40,7 +40,7 @@
         v-model="item.title"
         @input="onInput"
         rows="1"
-        class="appearance-none min-h-5 flex-grow lg:text-xl font-bold text-sky-700 resize-none overflow-hidden outline-none bg-transparent break-all"
+        class="appearance-none min-h-5 flex-grow lg:text-xl font-bold text-sky-700 resize-none overflow-hidden outline-none bg-transparent"
       />
 
       <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">
@@ -142,6 +142,7 @@ const [parent, dragAndDropTasks] = useDragAndDrop(tasks.value, config);
 const openEdit = () => {
   edit.value = true;
   nextTick(() => {
+    autoResize(textarea.value);
     textarea.value?.focus();
   });
 
