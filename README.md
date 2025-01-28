@@ -17,3 +17,7 @@ The goal is to create a To-Do app using Vue and the state management library Pin
 ## Aditional features - something that would be nice, but is not required
 
 - make the create/edit/delete actions reversible so that the user can quickly take back their action
+
+## You can find deploy of this app here on Netlify:
+
+[app deploy](https://freelo-fe-test.netlify.app/)
