@@ -121,6 +121,9 @@ const config: Partial<ParentConfig<any>> = {
       });
     }
   },
+  longPress: true,
+  longPressClass: "border-2 border-sky-400",
+  longPressDuration: 100,
   plugins: [animations()],
 };
 

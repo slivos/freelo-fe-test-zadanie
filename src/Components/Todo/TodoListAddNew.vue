@@ -19,7 +19,7 @@ const todoListsStore = useTodoListsStore();
 const addNewList = () => {
   const newList = {
     id: uuid.v4(),
-    title: "Title of todo list",
+    title: "New todo list",
     tasks: [],
   };
 

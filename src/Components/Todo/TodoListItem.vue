@@ -1,7 +1,7 @@
 <template>
   <div
     ref="listItemRef"
-    class="flex flex-col gap-4 bg-sky-50 border border-sky-200 rounded-md p-2 relative overflow-hidden scroll-mb-12"
+    class="flex flex-col gap-4 bg-sky-50 border border-sky-200 rounded-md p-2 relative overflow-hidden"
   >
     <div class="group flex items-center gap-3">
       <DragDropIcon
@@ -33,16 +33,15 @@
         </div>
       </div>
 
-      <div
+      <textarea
         v-if="edit"
         ref="textarea"
+        placeholder="Todo list title"
+        v-model="item.title"
         @input="onInput"
-        class="flex-grow lg:text-xl font-bold text-sky-700 overflow-clip outline-none bg-transparent break-all"
-        tabindex="0"
-        contenteditable
-      >
-        {{ item.title }}
-      </div>
+        rows="1"
+        class="appearance-none min-h-5 flex-grow lg:text-xl font-bold text-sky-700 resize-none overflow-hidden outline-none bg-transparent break-all"
+      />
 
       <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">
         <button
@@ -92,6 +91,7 @@ import { animations } from "@formkit/drag-and-drop";
 import { useDragAndDrop } from "@formkit/drag-and-drop/vue";
 import type { ParentConfig } from "@formkit/drag-and-drop";
 import { uuid } from "vue-uuid";
+import { useAutoResize } from "@composables/useAutoResize";
 
 const props = defineProps({
   item: {
@@ -101,10 +101,11 @@ const props = defineProps({
 });
 
 const todoListsStore = useTodoListsStore();
+const { autoResize } = useAutoResize();
 
-const currentList = ref(todoListsStore.getCurrentTodoList(props.item.id).value);
+// const currentList = ref(todoListsStore.getCurrentTodoList(props.item.id).value);
 const tasks = ref(todoListsStore.getTasksRef(props.item.id).value);
-const textarea = ref<HTMLElement>();
+const textarea = ref<HTMLElement | null>(null);
 const edit = ref(false);
 const listItemRef = ref<HTMLElement>();
 
@@ -129,7 +130,9 @@ const config: Partial<ParentConfig<any>> = {
       });
     }
   },
-
+  longPress: true,
+  longPressClass: "border-2 border-emerald-400",
+  longPressDuration: 100,
   plugins: [animations()],
 };
 
@@ -138,31 +141,18 @@ const [parent, dragAndDropTasks] = useDragAndDrop(tasks.value, config);
 
 const openEdit = () => {
   edit.value = true;
-  todoListsStore.saveToHistory(true);
-  todoListsStore.action = "update-list";
-
   nextTick(() => {
     textarea.value?.focus();
-
-    const textbox = textarea.value as HTMLTextAreaElement;
-
-    // Wait for the next render cycle to ensure focus has been applied
-    setTimeout(() => {
-      const selection = window.getSelection();
-      const range = document.createRange();
-
-      // Move the cursor to the end of the content
-      range.selectNodeContents(textbox);
-      range.collapse(false); // Collapse to the end of the content
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-    }, 0); // Use a small timeout to handle mobile quirks
   });
+
+  todoListsStore.saveToHistory(true);
+  todoListsStore.action = "update-list";
 };
 
 const editList = () => {
   edit.value = false;
   todoListsStore.boxOpen = true;
+  todoListsStore.updateTodoList(props.item.id, props.item.title);
   todoListsStore.saveLists();
 };
 
@@ -171,12 +161,8 @@ const deleteList = () => {
   todoListsStore.removeTodoList(props.item.id);
 };
 
-const onInput = (e: Event) => {
-  const target = e.target as HTMLElement;
-
-  if (!currentList.value) return;
-
-  todoListsStore.updateTodoList(props.item.id, target.innerText);
+const onInput = () => {
+  autoResize(textarea.value);
 };
 
 // Add a new task to the current list
@@ -190,12 +176,10 @@ const addTask = () => {
   todoListsStore.addTask(props.item.id, newTask);
 
   nextTick(() => {
-    if (listItemRef.value) {
-      listItemRef.value.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
+    document.body.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   });
 };
 
@@ -214,13 +198,9 @@ watch(
   { deep: true }
 );
 
-watch(
-  dragAndDropTasks,
-  (newTasks) => {
-    tasks.value = newTasks;
+watch(dragAndDropTasks, (newTasks) => {
+  tasks.value = newTasks;
 
-    todoListsStore.setTasks(props.item.id, newTasks);
-  },
-  { deep: true }
-);
+  todoListsStore.setTasks(props.item.id, newTasks);
+});
 </script>

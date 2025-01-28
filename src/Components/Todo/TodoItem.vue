@@ -63,16 +63,15 @@
       </div>
     </div>
 
-    <div
+    <textarea
       v-if="edit"
       ref="textarea"
+      placeholder="Task title"
+      v-model="item.title"
       @input="onInput"
-      class="flex-grow min-w-6 text-sm font-semibold text-gray-500 overflow-clip outline-none bg-transparent"
-      tabindex="0"
-      contenteditable
-    >
-      {{ item.title }}
-    </div>
+      rows="1"
+      class="appearance-none flex-grow text-sm font-semibold text-gray-500 resize-none overflow-hidden outline-none bg-transparent break-all"
+    />
 
     <div v-if="edit" class="flex flex-col sm:flex-row items-center gap-2">
       <button
@@ -99,6 +98,7 @@ import { TaskType } from "src/types/task-type";
 import { ref, PropType, nextTick } from "vue";
 import { useTodoListsStore } from "@stores/todo-lists-store";
 import TrashIcon from "@svg/trash.svg";
+import { useAutoResize } from "@composables/useAutoResize";
 
 const props = defineProps({
   item: {
@@ -114,36 +114,19 @@ const props = defineProps({
 const emit = defineEmits(["remove-todo"]);
 
 const todoListsStore = useTodoListsStore();
+const { autoResize } = useAutoResize();
 
-const textarea = ref<HTMLElement>();
+const textarea = ref<HTMLElement | null>(null);
 const edit = ref(false);
 
 const openEdit = () => {
   edit.value = true;
-  todoListsStore.saveToHistory(true);
-  todoListsStore.action = "update-task";
-
   nextTick(() => {
     textarea.value?.focus();
-
-    const textbox = textarea.value as HTMLTextAreaElement;
-    if (!textbox) return;
-
-    // Use a slightly longer timeout to address mobile rendering delays
-    setTimeout(() => {
-      const selection = window.getSelection();
-      const range = document.createRange();
-
-      // Move the cursor to the end of its content
-      range.selectNodeContents(textbox);
-      range.collapse(false); // Collapse to the end of the content
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-
-      // For better compatibility on mobile devices
-      textbox.scrollTop = textbox.scrollHeight; // Ensure the cursor is visible
-    }, 50); // Increase timeout for better mobile support
   });
+
+  todoListsStore.saveToHistory(true);
+  todoListsStore.action = "update-task";
 };
 
 const deleteItem = () => {
@@ -153,18 +136,17 @@ const deleteItem = () => {
 const editItem = () => {
   edit.value = false;
   todoListsStore.boxOpen = true;
-  todoListsStore.saveLists();
-};
-
-const onInput = (e: Event) => {
-  const target = e.target as HTMLElement;
-
   todoListsStore.updateTask(
     props.listId,
     props.item.id,
-    target.innerText,
+    props.item.title,
     props.item.completed
   );
+  todoListsStore.saveLists();
+};
+
+const onInput = () => {
+  autoResize(textarea.value);
 };
 
 const setCompleted = (e: Event) => {

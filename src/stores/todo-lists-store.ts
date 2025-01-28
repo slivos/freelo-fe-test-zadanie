@@ -115,11 +115,9 @@ export const useTodoListsStore = defineStore("todo-lists", () => {
   const updateTask = (
     listId: string,
     taskId: string,
-    title?: string,
-    completed?: boolean
+    title: string,
+    completed: boolean
   ) => {
-    if (!title || completed === undefined) return;
-
     const updatedLists = todoLists.value.map((list) => {
       if (list.id === listId) {
         const updatedTasks = list.tasks.map((taskItem) => {
